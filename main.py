@@ -21,7 +21,6 @@ current_directory = os.getcwd()
 
 # 读取环境变量
 api_token = os.getenv('API_TOKEN')
-pause_duration = 1
 
 headers = {
     "Authorization": f"Bearer {api_token}",
@@ -160,11 +159,36 @@ def convertTextToVideo(model, text):
 
             output_video.write(resized_image)
             # 添加停顿帧
-            for _ in range(int(pause_duration * 30)):
+            duration = get_duration_from_vtt(f"voices/{image_file.split('.')[0]}.mp3.vtt")
+            print(duration)
+            for _ in range(int(duration * 30)):
                 output_video.write(resized_image)
 
     output_video.release()
 
+
+def get_duration_from_vtt(vtt_file):
+    with open(vtt_file, 'r') as file:
+        lines = file.readlines()
+
+    if len(lines) < 2:
+        raise ValueError('Invalid VTT file format')
+
+    time_line = lines[2].strip()
+    start_time, end_time = time_line.split('-->')
+
+    start_time = start_time.strip()
+    end_time = end_time.strip()
+
+    # 解析时间信息
+    start_hour, start_minute, start_second = map(float, start_time.split(':'))
+    end_hour, end_minute, end_second = map(float, end_time.split(':'))
+
+    # 计算总时长（以秒为单位）
+    duration = (end_hour * 3600 + end_minute * 60 + end_second) - \
+        (start_hour * 3600 + start_minute * 60 + start_second)
+
+    return duration
 
 
 if __name__ == '__main__':
