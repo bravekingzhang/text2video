@@ -48,13 +48,13 @@ def generateImage(model, prompt):
 
 def convert_text_to_speech(text, output_file):
         # 指定输出目录
-    output_directory = os.path.join(current_directory)
+    output_directory = os.path.join(current_directory,"voices")
     # 创建输出目录（如果不存在）
     os.makedirs(output_directory, exist_ok=True)
     # 执行命令，并将工作目录设置为输出目录
     try:
         command = ['edge-tts', '--voice', 'zh-CN-XiaoyiNeural', '--text', text, '--write-media', output_file, '--write-subtitles', f'{output_file}.vtt']
-        result = subprocess.run(command,cwd=output_directory,timeout=10)
+        result = subprocess.run(command, cwd=current_directory, timeout=10)
         print(result)
 
     except subprocess.CalledProcessError as e:
@@ -129,9 +129,10 @@ def convertTextToVideo(model, text):
     # 合成视频
     frame_width = 640
     frame_height = 480
-    output_video = "videos/" + str(int(time.time())) + \
+    timeStamp = str(int(time.time()))
+    output_video_path = "videos/" + timeStamp + \
         "-" + model.split("/")[-1] + ".mp4"
-    output_video = cv2.VideoWriter(output_video, cv2.VideoWriter_fourcc(
+    output_video = cv2.VideoWriter(output_video_path, cv2.VideoWriter_fourcc(
         *'mp4v'), 30, (frame_width, frame_height))
 
     image_files = os.listdir('images')
@@ -165,7 +166,53 @@ def convertTextToVideo(model, text):
                 output_video.write(resized_image)
 
     output_video.release()
+    desc_output_video_path = "videos/" + timeStamp + \
+        "-" + model.split("/")[-1] + ".withAudio.mp4"
 
+    merge_audio_to_video("voices", output_video_path,
+                         desc_output_video_path)
+
+
+def merge_audio_to_video(audio_directory, video_file, output_file):
+    # 获取目录中的音频文件
+    audio_files = [file for file in os.listdir(
+        audio_directory) if file.endswith('.mp3')]
+
+    if not audio_files:
+        print("No audio files found in the directory.")
+        return
+    audio_files.sort()
+    # 生成FFmpeg命令
+    command = [
+        'ffmpeg',
+        '-i',
+        video_file,
+    ]
+
+    # 添加音频文件参数
+    for audio_file in audio_files:
+        command.extend(['-i', audio_directory+'/'+audio_file])
+
+    # 设置音频合并选项
+    command.extend([
+        '-filter_complex',
+        ''.join([f'[{i+1}:0]' for i in range(len(audio_files))]) +
+        f'concat=n={len(audio_files)}:v=0:a=1[outa]',
+        '-map',
+        '0:v',
+        '-map',
+        '[outa]',
+        '-c:v',
+        'copy',
+        '-c:a',
+        'aac',
+        '-shortest',
+        output_file
+    ])
+
+    # 执行FFmpeg命令
+    result = subprocess.run(command,cwd=current_directory, timeout=300)
+    print(result)
 
 def get_duration_from_vtt(vtt_file):
     with open(vtt_file, 'r') as file:
