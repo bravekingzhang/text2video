@@ -6,6 +6,7 @@ import os
 import textwrap
 from dotenv import load_dotenv
 import numpy as np
+import subprocess
 
 models = ["stabilityai/stable-diffusion-2-1", "andite/anything-v4.0"]
 
@@ -14,6 +15,9 @@ load_dotenv('.env', override=True)
 
 # 尝试加载本地开发环境变量文件
 load_dotenv('.local.env', override=True)
+
+# 获取当前脚本所在的目录
+current_directory = os.getcwd()
 
 # 读取环境变量
 api_token = os.getenv('API_TOKEN')
@@ -30,12 +34,33 @@ def generateImage(model, prompt):
     r = requests.post("https://api-inference.huggingface.co/models/" + model,
                       data=json.dumps(body), headers=headers)
     # 将图片写入到 images 目录下，每个图片使用(时间戳+model).png 来命名
-    imagePath = "images/" + str(int(time.time())) + \
+    timeStamp = str(int(time.time()))
+    imagePath = "images/" + timeStamp + \
         "-" + model.split("/")[-1] + ".png"
     with open(imagePath, "wb") as f:
         f.write(r.content)
         f.close()
+    voicePath = "voices/" + timeStamp + \
+        "-" + model.split("/")[-1] + ".mp3"
+    convert_text_to_speech(
+        text=prompt, output_file=voicePath
+    )
 
+
+def convert_text_to_speech(text, output_file):
+        # 指定输出目录
+    output_directory = os.path.join(current_directory)
+    # 创建输出目录（如果不存在）
+    os.makedirs(output_directory, exist_ok=True)
+    # 执行命令，并将工作目录设置为输出目录
+    try:
+        command = ['edge-tts', '--voice', 'zh-CN-XiaoyiNeural', '--text', text, '--write-media', output_file, '--write-subtitles', f'{output_file}.vtt']
+        result = subprocess.run(command,cwd=output_directory,timeout=10)
+        print(result)
+
+    except subprocess.CalledProcessError as e:
+        print("Command execution failed with return code:", e.returncode)
+        print("Command output:", e.output)
 
 def clear_folder(folder_path):
     """清空指定文件夹中的文件"""
@@ -94,6 +119,8 @@ def convertTextToVideo(model, text):
 
     # 清空 images 文件夹
     clear_folder("images")
+    # 清空 voices 文件夹
+    clear_folder("voices")
 
     # 为每个句子生成图片
     for sentence in sentences:
@@ -141,4 +168,5 @@ def convertTextToVideo(model, text):
 
 
 if __name__ == '__main__':
+    # convert_text_to_speech("are you ok","hello1.mp3")
     convertTextToVideo(models[0], "One morning,while I was brushing my teeth. suddenly, my puppy ran over and yelled at me. At this time, I heard the sound of a fire truck outside and thought. I thought to myself, it can’t be such a coincidence")

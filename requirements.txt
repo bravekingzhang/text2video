@@ -1,2 +1,4 @@
 requests
 opencv-python
+pydub
+pyttsx3
