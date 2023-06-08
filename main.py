@@ -57,29 +57,27 @@ def add_text_to_image(image, text, position, font, font_scale, color, thickness,
     x = max(0, min(x, image_width - text_width))
     y = max(0, min(y, image_height - text_height))
 
-    # 创建带有透明度的背景图像
+    # 绘制带有背景色的矩形
     if background_color is not None and background_alpha > 0:
-        print(background_alpha)
-        background = np.ones((text_height, text_width, 3),
-                             dtype=np.uint8) * background_color
-        alpha = background_alpha
-        overlay = cv2.addWeighted(
-            background, alpha, np.zeros_like(background), 1 - alpha, 0)
-
-        # 将背景图像调整为与图像区域相同的大小
-        overlay = cv2.resize(overlay, (text_width, text_height))
-
-        # 将叠加图像与原始图像进行融合
+        rectangle_position = (x, y)
+        rectangle_size = (text_width, text_height)
+        background_color = tuple(background_color)  # 将颜色值转换为元组形式
+        alpha = int(background_alpha * 255)  # 将透明度转换为合适的范围
+        overlay = np.ones((text_height, text_width, 3),
+                          dtype=np.uint8) * background_color
+        overlay = cv2.addWeighted(overlay, alpha, np.zeros_like(
+            overlay), 1 - alpha, 0)
         image_roi = image[y:y+text_height, x:x+text_width]
-        image[y:y+text_height, x:x+text_width] = cv2.addWeighted(
-            image_roi.astype(float), 1.0, overlay.astype(float), 1.0, 0.0)
+        image_roi = image_roi.astype(float)
+        overlay = overlay.astype(float)
+        image_roi = cv2.addWeighted(image_roi, 1.0, overlay, 1.0, 0.0)
+        image[y:y+text_height, x:x+text_width] = image_roi.astype(image.dtype)
 
     # 绘制文本
     cv2.putText(image, text, (x, y + text_height - thickness),
                 font, font_scale, color, thickness, cv2.LINE_AA)
 
     return image
-
 
 
 def convertTextToVideo(model, text):
