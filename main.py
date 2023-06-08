@@ -59,7 +59,11 @@ def add_text_to_image(image, text, position, font, font_scale, color, thickness,
 
     # Calculate the position of the text
     x, y = position
-    x = max(0, min(x, image_width - text_width))
+    # x = max(0, min(x, image_width - text_width))
+
+    # Calculate the x-position of the text for center alignment
+    x = max(0, (image_width - text_width) // 2)
+
     y = max(0, min(y, image_height - text_height))
 
     # Create a copy of the image
@@ -76,17 +80,12 @@ def add_text_to_image(image, text, position, font, font_scale, color, thickness,
                             image_copy, background_alpha, 0)
 
     # Draw the text on the image with padding
-    text_position = (x + padding, y   + int((text_height+padding)/2))
+    text_position = (x + padding, y + padding + int((text_height-padding)/2))
     cv2.putText(image, text, text_position,
                 font, font_scale, color, thickness, cv2.LINE_AA)
 
     # Return the image
     return image
-
-
-
-
-
 
 def convertTextToVideo(model, text):
 
