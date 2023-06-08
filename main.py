@@ -62,21 +62,27 @@ def add_text_to_image(image, text, position, font, font_scale, color, thickness,
     x = max(0, min(x, image_width - text_width))
     y = max(0, min(y, image_height - text_height))
 
+    # Create a copy of the image
+    image_copy = image.copy()
+
     # Draw a rectangle with a background color if specified
     if background_color is not None and background_alpha > 0:
         rectangle_position = (x, y)
-        cv2.addWeighted(image, background_alpha, image,
-                        1 - background_alpha, 0, image)
-        cv2.rectangle(image, rectangle_position,
+        cv2.rectangle(image_copy, rectangle_position,
                       (x + text_width, y + text_height), background_color, -1)
 
+    # Blend the image and the copy with the specified alpha value
+    image = cv2.addWeighted(image, 1 - background_alpha,
+                            image_copy, background_alpha, 0)
+
     # Draw the text on the image with padding
-    text_position = (x + padding, y  + padding + int(text_height/2))
+    text_position = (x + padding, y   + int((text_height+padding)/2))
     cv2.putText(image, text, text_position,
                 font, font_scale, color, thickness, cv2.LINE_AA)
 
     # Return the image
     return image
+
 
 
 
@@ -120,10 +126,10 @@ def convertTextToVideo(model, text):
             background_color = (0, 0, 0)  # 黑色背景
             background_alpha = 0.5  # 背景透明度
 
-            for line in textwrap.wrap(sentences[image_files.index(image_file)], width=80):
+            for line in textwrap.wrap(sentences[image_files.index(image_file)], width=90):
                 text_position = (10, y_offset)
                 resized_image = add_text_to_image(resized_image, line, text_position, font,
-                                                  font_scale, text_color, font_thickness, background_color, background_alpha)
+                                                  font_scale, text_color, font_thickness, background_color, background_alpha, padding=10)
                 y_offset += 30  # 调整下一行文字的偏移量
 
             output_video.write(resized_image)
