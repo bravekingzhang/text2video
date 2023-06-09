@@ -157,7 +157,7 @@ def convertTextToVideo(model, text):
             background_color = (0, 0, 0)  # 黑色背景
             background_alpha = 0.5  # 背景透明度
 
-            for line in textwrap.wrap(sentences[image_files.index(image_file)], width=90):
+            for line in textwrap.wrap(sentences[image_files.index(image_file)], width=70):
                 text_position = (10, y_offset)
                 resized_image = add_text_to_image(resized_image, line, text_position, font,
                                                   font_scale, text_color, font_thickness, background_color, background_alpha, padding=10)
@@ -220,32 +220,39 @@ def merge_audio_to_video(audio_directory, video_file, output_file):
     print(result)
 
 def get_duration_from_vtt(vtt_file):
+    if not os.path.exists(vtt_file):
+        return 0.1
     with open(vtt_file, 'r') as file:
         lines = file.readlines()
-    try:
-        if len(lines) < 2:
-            return 0.1
 
-        time_line = lines[2].strip()
-        start_time, end_time = time_line.split('-->')
+    total_duration = 0.1
 
-        start_time = start_time.strip()
-        end_time = end_time.strip()
+    for line in lines:
+        line = line.strip()
+        if '-->' in line:
+            start_time, end_time = line.split('-->')
+            start_time = start_time.strip()
+            end_time = end_time.strip()
+            start_seconds = convert_time_to_seconds(start_time)
+            end_seconds = convert_time_to_seconds(end_time)
+            duration = end_seconds - start_seconds
+            total_duration += duration
 
-        # 解析时间信息
-        start_hour, start_minute, start_second = map(float, start_time.split(':'))
-        end_hour, end_minute, end_second = map(float, end_time.split(':'))
+    return total_duration
 
-        # 计算总时长（以秒为单位）
-        duration = (end_hour * 3600 + end_minute * 60 + end_second) - \
-            (start_hour * 3600 + start_minute * 60 + start_second)
 
-        return duration
-    except:
-        # 如果解析失败，可能生成音频异常,返回0
-        return 0.1
+def convert_time_to_seconds(time):
+    hours, minutes, seconds = time.split(':')
+    seconds, milliseconds = seconds.split('.')
+    hours = int(hours)
+    minutes = int(minutes)
+    seconds = int(seconds)
+    milliseconds = int(milliseconds)
+    total_seconds = (hours * 3600) + (minutes * 60) + \
+        seconds + (milliseconds / 1000)
+    return total_seconds
 
 
 if __name__ == '__main__':
     # convert_text_to_speech("are you ok","hello1.mp3")
-    convertTextToVideo(models[0], "THERE was no possibility of taking a walk that day. We had been wandering, indeed, in the leafless shrubbery an hour in the morning; but since dinner (Mrs. Reed, when there was no company, dined early) the cold winter wind had brought with it clouds so sombre, and a rain so penetrating, that further outdoor exercise was now out of the question. I was glad of it: I never liked long walks, especially on chilly afternoons: dreadful to me was the coming home in the raw twilight, with nipped fingers and toes, and a heart saddened by the chidings of Bessie, the nurse, and humbled by the consciousness of my physical inferiority to Eliza, John, and Georgiana Reed. The said Eliza, John, and Georgiana were now clustered round their mama in the drawing-room: she lay reclined on a sofa by the fireside, and with her darlings about her (for the time neither quarrelling nor crying) looked perfectly happy. Me, she had dispensed from joining the group; saying, 'She regretted to be under the necessity of keeping me at a distance; but that until she heard from Bessie, and could discover by her own observation, that I was endeavouring in good earnest to acquire a more sociable and childlike disposition, a more attractive and sprightly manner- something lighter, franker, more natural, as it were- she really must exclude me from privileges intended only for contented, happy, little children.'")
+    convertTextToVideo(models[1], "THERE was no possibility of taking a walk that day. We had been wandering, indeed, in the leafless shrubbery an hour in the morning; but since dinner (Mrs. Reed, when there was no company, dined early) the cold winter wind had brought with it clouds so sombre, and a rain so penetrating, that further outdoor exercise was now out of the question. I was glad of it: I never liked long walks, especially on chilly afternoons: dreadful to me was the coming home in the raw twilight, with nipped fingers and toes, and a heart saddened by the chidings of Bessie, the nurse, and humbled by the consciousness of my physical inferiority to Eliza, John, and Georgiana Reed. The said Eliza, John, and Georgiana were now clustered round their mama in the drawing-room: she lay reclined on a sofa by the fireside, and with her darlings about her (for the time neither quarrelling nor crying) looked perfectly happy. Me, she had dispensed from joining the group; saying, 'She regretted to be under the necessity of keeping me at a distance; but that until she heard from Bessie, and could discover by her own observation, that I was endeavouring in good earnest to acquire a more sociable and childlike disposition, a more attractive and sprightly manner- something lighter, franker, more natural, as it were- she really must exclude me from privileges intended only for contented, happy, little children.'")
