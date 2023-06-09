@@ -10,6 +10,7 @@ import subprocess
 import re
 
 from add_text_to_image import add_text_to_image
+from translate import translate_to_english
 
 models = ["stabilityai/stable-diffusion-2-1", "andite/anything-v4.0"]
 
@@ -31,7 +32,7 @@ headers = {
 }
 def generateImage(model, prompt):
     body = {
-        "inputs": prompt
+        "inputs": translate_to_english(prompt)
     }
     r = requests.post("https://api-inference.huggingface.co/models/" + model,
                       data=json.dumps(body), headers=headers)
@@ -222,4 +223,11 @@ def convert_time_to_seconds(time):
 
 if __name__ == '__main__':
     # convert_text_to_speech("are you ok","hello1.mp3")
-    convertTextToVideo(models[1], "我骑着自行车去上学碰到一条小狗在路边狂叫顿时我就火冒三丈想过去打死他可是她不跑我能怎么办呢很烦啊，我就慌了，我就骑着自行车走了")
+   text_test= '''
+   唐门所在是一个神秘的地方，许多人只知道，那是一个半山腰，而唐门所在这座山的山顶有一个令人胆颤心惊的名字，——鬼见愁。
+
+从鬼见愁悬崖上扔出一块石头，要足足数上十九下才会听到石落山底的回声，可见其高，也正是因为这十九秒，尚超过十八层地狱一筹，故而得名。
+
+一名身穿灰衣的青年正站在鬼见愁顶峰，凛冽的山风不能令他的身体有丝毫移动，从他胸口处那斗大的唐字就可以认出，他来自唐门，灰衣代表的，是唐门外门弟子。
+'''
+   convertTextToVideo(models[0], text_test)
