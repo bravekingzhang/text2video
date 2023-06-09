@@ -10,22 +10,40 @@
 - 音频是一个有时间概念的东西，恰好可以通过音频控制一张画面的播放时长
 - 在通过 ffmpeg 将音频合并到原始视频中。
 
-最终，一个有画面，有字母，是声音的视频就出现了，咱们实现了一个 `文本转视频`。
+最终，一个有画面，有字幕，有声音的视频就出现了，咱们实现了一个 `文本转视频`。
+
+# 本地开发
 
 ## 安装依赖
 
 pip install -r requirements.txt
 
+## 生成 huggingface api key
+
+https://huggingface.co/settings/tokens
+因为，该项目中使用了 huggingface 上的开源文生图模型生成图片，中文生成图片效果不大好，因此，本项目对中文进行了翻译，感谢有道，直接使用有道翻译，比较方便。翻译后，生成图的质量有一定的提高。
+
+## 安装 ffmpeg
+
+因为视频合成声音需要
+
 ## 开始使用
 
-python3 main.py "text here ..."
+python3 main.py
 
 ## 创作不易，支持开源
 
+如果你觉得对你有用，就请我一杯咖啡。
+
+<img src="https://github.com/bravekingzhang/utools-code2flow-official/blob/main/shoukuanma.png" alt="收款码" style="width: 40%;" />
 ## 加群交流
 
 加我微信 `chongshenghouwang` 备注来源，加群的目的。
 
-# License
+<img src="https://github.com/bravekingzhang/flutter_chat_box/blob/main/artificial/qunliao.pic.jpg"  style="width: 50%;">
 
-本项目采用 MIT License。
+添加我，注明自己 github 账号名，入群的目的，加入群聊，一起学习交流。
+
+# License: MIT
+
+本项目采用 MIT 许可证授权。

@@ -222,7 +222,6 @@ def convert_time_to_seconds(time):
 
 
 if __name__ == '__main__':
-    # convert_text_to_speech("are you ok","hello1.mp3")
    text_test= '''
    一个风和日丽的早上，我骑着自行车去学校，在路上遇到了彩虹，当时我的心情非常的愉快。
 '''
