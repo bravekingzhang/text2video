@@ -49,9 +49,8 @@ python3 main.py
 如果你觉得对你有用，就请我一杯咖啡。
 
 <img src="https://github.com/bravekingzhang/utools-code2flow-official/blob/main/shoukuanma.png" alt="收款码" style="width: 40%;" />
-## 加群交流
 
-加我微信 `chongshenghouwang` 备注来源，加群的目的。
+## 加群交流
 
 <img src="https://github.com/bravekingzhang/flutter_chat_box/blob/main/artificial/qunliao.pic.jpg"  style="width: 50%;">
 
