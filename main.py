@@ -7,6 +7,9 @@ import textwrap
 from dotenv import load_dotenv
 import numpy as np
 import subprocess
+import re
+
+from add_text_to_image import add_text_to_image
 
 models = ["stabilityai/stable-diffusion-2-1", "andite/anything-v4.0"]
 
@@ -74,52 +77,20 @@ def clear_folder(folder_path):
             os.remove(file_path)
 
 
-def add_text_to_image(image, text, position, font, font_scale, color, thickness, background_color=None, background_alpha=0.5, padding=5):
-    # Get the height, width, and number of channels of the image
-    image_height, image_width, _ = image.shape
 
-    # Calculate the width and height of the text
-    (text_width, text_height), _ = cv2.getTextSize(
-        text, font, font_scale, thickness)
 
-    # Apply padding to the text width and height
-    text_width += 2 * padding
-    text_height += 2 * padding
 
-    # Calculate the position of the text
-    x, y = position
-    # x = max(0, min(x, image_width - text_width))
-
-    # Calculate the x-position of the text for center alignment
-    x = max(0, (image_width - text_width) // 2)
-
-    y = max(0, min(y, image_height - text_height))
-
-    # Create a copy of the image
-    image_copy = image.copy()
-
-    # Draw a rectangle with a background color if specified
-    if background_color is not None and background_alpha > 0:
-        rectangle_position = (x, y)
-        cv2.rectangle(image_copy, rectangle_position,
-                      (x + text_width, y + text_height), background_color, -1)
-
-    # Blend the image and the copy with the specified alpha value
-    image = cv2.addWeighted(image, 1 - background_alpha,
-                            image_copy, background_alpha, 0)
-
-    # Draw the text on the image with padding
-    text_position = (x + padding, y + padding + int((text_height-padding)/2))
-    cv2.putText(image, text, text_position,
-                font, font_scale, color, thickness, cv2.LINE_AA)
-
-    # Return the image
-    return image
-
+def split_sentences(text):
+    pattern = r'[,.，。]'
+    sentences = re.split(pattern, text)
+    # 移除空白的句子
+    sentences = [sentence.strip()
+                 for sentence in sentences if sentence.strip()]
+    return sentences
 def convertTextToVideo(model, text):
 
     # 将文本段落进行分句
-    sentences = text.split('.')
+    sentences = split_sentences(text)
 
     # 清空 images 文件夹
     clear_folder("images")
@@ -145,27 +116,19 @@ def convertTextToVideo(model, text):
 
     for image_file in image_files:
         if image_file.endswith(".png"):
-            image = cv2.imread(f"images/{image_file}")
-            resized_image = cv2.resize(image, (frame_width, frame_height))
 
-            # 添加透明度背景和文字
-            y_offset = frame_height - 60  # 文字起始纵坐标
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            font_scale = 0.5
-            font_thickness = 1
             text_color = (255, 255, 255)  # 白色文字
-            background_color = (0, 0, 0)  # 黑色背景
-            background_alpha = 0.5  # 背景透明度
-
-            for line in textwrap.wrap(sentences[image_files.index(image_file)], width=70):
-                text_position = (10, y_offset)
-                resized_image = add_text_to_image(resized_image, line, text_position, font,
-                                                  font_scale, text_color, font_thickness, background_color, background_alpha, padding=10)
-                y_offset += 30  # 调整下一行文字的偏移量
-
+            background = (0, 0, 0,128)  # 黑色背景半透明
+            image_path = "images/" + image_file
+            draw_text = sentences[image_files.index(image_file)]
+            add_text_to_image(draw_text, image_path,
+                              text_color, background, padding=10)
+            image = cv2.imread(image_path)
+            resized_image = cv2.resize(image, (frame_width, frame_height))
             output_video.write(resized_image)
             # 添加停顿帧
-            duration = get_duration_from_vtt(f"voices/{image_file.split('.')[0]}.mp3.vtt")
+            duration = get_duration_from_vtt(
+                f"voices/{find_file_name_without_extension(image_file)}.mp3.vtt")
             print(duration)
             for _ in range(int(duration * 30)):
                 output_video.write(resized_image)
@@ -177,7 +140,10 @@ def convertTextToVideo(model, text):
     merge_audio_to_video("voices", output_video_path,
                          desc_output_video_path)
 
-
+def find_file_name_without_extension(file_path):
+    file_name = os.path.basename(file_path)
+    file_name_without_extension = os.path.splitext(file_name)[0]
+    return file_name_without_extension
 def merge_audio_to_video(audio_directory, video_file, output_file):
     # 获取目录中的音频文件
     audio_files = [file for file in os.listdir(
@@ -220,6 +186,7 @@ def merge_audio_to_video(audio_directory, video_file, output_file):
     print(result)
 
 def get_duration_from_vtt(vtt_file):
+    print(vtt_file)
     if not os.path.exists(vtt_file):
         return 0.1
     with open(vtt_file, 'r') as file:
@@ -255,4 +222,4 @@ def convert_time_to_seconds(time):
 
 if __name__ == '__main__':
     # convert_text_to_speech("are you ok","hello1.mp3")
-    convertTextToVideo(models[1], "THERE was no possibility of taking a walk that day. We had been wandering, indeed, in the leafless shrubbery an hour in the morning; but since dinner (Mrs. Reed, when there was no company, dined early) the cold winter wind had brought with it clouds so sombre, and a rain so penetrating, that further outdoor exercise was now out of the question. I was glad of it: I never liked long walks, especially on chilly afternoons: dreadful to me was the coming home in the raw twilight, with nipped fingers and toes, and a heart saddened by the chidings of Bessie, the nurse, and humbled by the consciousness of my physical inferiority to Eliza, John, and Georgiana Reed. The said Eliza, John, and Georgiana were now clustered round their mama in the drawing-room: she lay reclined on a sofa by the fireside, and with her darlings about her (for the time neither quarrelling nor crying) looked perfectly happy. Me, she had dispensed from joining the group; saying, 'She regretted to be under the necessity of keeping me at a distance; but that until she heard from Bessie, and could discover by her own observation, that I was endeavouring in good earnest to acquire a more sociable and childlike disposition, a more attractive and sprightly manner- something lighter, franker, more natural, as it were- she really must exclude me from privileges intended only for contented, happy, little children.'")
+    convertTextToVideo(models[1], "我骑着自行车去上学碰到一条小狗在路边狂叫顿时我就火冒三丈想过去打死他可是她不跑我能怎么办呢很烦啊，我就慌了，我就骑着自行车走了")
