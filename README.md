@@ -4,7 +4,7 @@
 
 效果图如下：
 
-<img src="https://github.com/bravekingzhang/text2viedo/blob/main/demos/4301686560452_.pic.jpg" alt="效果图" style="width: 70%;" />
+<img src="https://github.com/bravekingzhang/text2viedo/blob/main/demos/4301686560452_.pic.jpg" alt="效果图" style="width: 100%;" />
 
 ## 实现原理
 
