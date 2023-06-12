@@ -18,11 +18,6 @@
 
 # 本地开发
 
-```python
-python3.10 app.py
-http://127.0.0.1:5000/
-```
-
 ## 安装依赖
 
 开发时，需要安装的环境是 `macOS` `python 3.10.12`，其他环境可能存在兼容性问题
@@ -40,7 +35,10 @@ https://huggingface.co/settings/tokens
 
 ## 开始使用
 
-python3 main.py
+```python
+python3.10 app.py
+http://127.0.0.1:5000/
+```
 
 ## 创作不易，支持开源
 
