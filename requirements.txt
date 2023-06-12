@@ -4,3 +4,5 @@ pydub
 pyttsx3
 jieba
 langdetect
+flask
+Pillow

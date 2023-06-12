@@ -2,16 +2,9 @@
 
 这个工具可以将一段文本转换为视频，并保存到指定的本地，初衷是想实现小说的可视化阅读功能。
 
-```python
+效果图如下：
 
-if __name__ == '__main__':
-   text_test= '''
-   一个风和日丽的早上，我骑着自行车去学校，在路上遇到了彩虹，当时我的心情非常的愉快。
-'''
-   convertTextToVideo(models[0], text_test)
-```
-
-文本转视频后的效果可以查看 `demos/demo.mp4`
+<img src="https://github.com/bravekingzhang/text2viedo/blob/main/4301686560452_.pic.jpg" alt="效果图" style="width: 70%;" />
 
 ## 实现原理
 
@@ -24,6 +17,11 @@ if __name__ == '__main__':
 最终，一个有画面，有字幕，有声音的视频就出现了，咱们实现了一个 `文本转视频`。
 
 # 本地开发
+
+```python
+python3.10 app.py
+http://127.0.0.1:5000/
+```
 
 ## 安装依赖
 

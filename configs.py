@@ -1,0 +1,1 @@
+models = ["stabilityai/stable-diffusion-2-1", "andite/anything-v4.0"]

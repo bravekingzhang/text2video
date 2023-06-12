@@ -12,7 +12,7 @@ import re
 from add_text_to_image import add_text_to_image
 from translate import translate_to_english
 
-models = ["stabilityai/stable-diffusion-2-1", "andite/anything-v4.0"]
+
 
 # 尝试加载线上环境变量文件
 load_dotenv('.env', override=True)
@@ -79,8 +79,6 @@ def clear_folder(folder_path):
 
 
 
-
-
 def split_sentences(text):
     pattern = r'[,.，。]'
     sentences = re.split(pattern, text)
@@ -135,11 +133,28 @@ def convertTextToVideo(model, text):
                 output_video.write(resized_image)
 
     output_video.release()
-    desc_output_video_path = "videos/" + timeStamp + \
+    middle_output_video_path = "videos/" + timeStamp + \
         "-" + model.split("/")[-1] + ".withAudio.mp4"
 
     merge_audio_to_video("voices", output_video_path,
-                         desc_output_video_path)
+                         middle_output_video_path)
+    desc_output_video_path = "videos/"+find_file_name_without_extension(
+        middle_output_video_path)+"transformH264.mp4"
+    convert_to_h264(middle_output_video_path, desc_output_video_path)
+    return desc_output_video_path
+
+
+def convert_to_h264(input_file, output_file):
+    # 使用 FFmpeg 进行视频转换
+    command = ['ffmpeg', '-i', input_file, '-c:v', 'libx264',
+               '-preset', 'slow', '-crf', '22', '-c:a', 'copy', output_file]
+    try:
+        subprocess.run(command, check=True)
+        print('视频转换成功！')
+    except subprocess.CalledProcessError as e:
+        print('视频转换失败:', e)
+
+
 
 def find_file_name_without_extension(file_path):
     file_name = os.path.basename(file_path)
@@ -225,4 +240,4 @@ if __name__ == '__main__':
    text_test= '''
    一个风和日丽的早上，我骑着自行车去学校，在路上遇到了彩虹，当时我的心情非常的愉快。
 '''
-   convertTextToVideo(models[0], text_test)
+#    convertTextToVideo(models[0], text_test)

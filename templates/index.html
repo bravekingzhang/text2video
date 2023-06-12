@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文本转视频</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      #video-player {
+        width: 100%;
+        height: auto;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container mx-auto p-4">
+      <h1 class="text-2xl font-bold mb-4">文本转视频</h1>
+      <div class="form-group mb-4">
+        <label for="text" class="text-lg">输入文本：</label>
+        <textarea
+          id="text"
+          rows="5"
+          class="border border-gray-300 rounded p-2 w-full"
+        ></textarea>
+      </div>
+      <div class="form-group mb-4">
+        <label for="model" class="text-lg">选择文生图模型：</label>
+        <select id="model" class="border border-gray-300 rounded p-2">
+          <option value="">Select a model</option>
+        </select>
+      </div>
+      <button
+        id="convert-btn"
+        class="btn bg-green-500 text-white rounded p-2"
+        onclick="convertTextToVideo()"
+      >
+        确定
+      </button>
+      <div id="loading" class="mt-4 hidden">
+        <div class="flex justify-center items-center">
+          <div class="loader"></div>
+          <span class="ml-2">正在转换...</span>
+        </div>
+      </div>
+      <div id="video-player" class="mt-4"></div>
+    </div>
+
+    <script>
+      fetch("/models")
+        .then((response) => response.json())
+        .then((models) => {
+          const modelSelector = document.getElementById("model");
+
+          // 渲染每个模型作为一个选项
+          models.forEach((model) => {
+            const option = document.createElement("option");
+            option.value = model;
+            option.textContent = model;
+            modelSelector.appendChild(option);
+          });
+        })
+        .catch((error) => console.error("Error:", error));
+
+      function convertTextToVideo() {
+        var text = document.getElementById("text").value;
+        var model = document.getElementById("model").value;
+        var convertBtn = document.getElementById("convert-btn");
+        var loading = document.getElementById("loading");
+        convertBtn.disabled = true;
+        loading.classList.remove("hidden");
+
+        // 发送POST请求到后端
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/convert", true);
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+            var videoPath = response.video_path;
+
+            // 在页面上显示视频
+            var videoPlayer = document.getElementById("video-player");
+            videoPlayer.innerHTML =
+              '<video src="' + videoPath + '" controls></video>';
+
+            convertBtn.disabled = false;
+            loading.classList.add("hidden");
+          }
+        };
+        xhr.send(
+          "text=" +
+            encodeURIComponent(text) +
+            "&model=" +
+            encodeURIComponent(model)
+        );
+      }
+    </script>
+  </body>
+</html>
