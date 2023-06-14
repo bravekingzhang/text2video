@@ -26,8 +26,13 @@ pip install -r requirements.txt
 
 ## 生成 huggingface api key
 
-https://huggingface.co/settings/tokens
+token 申请地址：https://huggingface.co/settings/tokens
+
 因为，该项目中使用了 huggingface 上的开源文生图模型生成图片，中文生成图片效果不大好，因此，本项目对中文进行了翻译，感谢有道，直接使用有道翻译，比较方便。翻译后，生成图的质量有一定的提高。
+
+token 可以写入到 .env 文件里面
+
+### 如果使用的 pollinations-ai ，则不填写 token 就 ok
 
 ## 安装 ffmpeg
 

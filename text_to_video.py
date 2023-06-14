@@ -34,7 +34,10 @@ def generateImage(model, prompt):
     body = {
         "inputs": translate_to_english(prompt)
     }
-    r = requests.post("https://api-inference.huggingface.co/models/" + model,
+    if model == "pollinations-ai":
+        r = requests.post("https://image.pollinations.ai/prompt/"+body['inputs'])
+    else:
+        r = requests.post("https://api-inference.huggingface.co/models/" + model,
                       data=json.dumps(body), headers=headers)
     # 将图片写入到 images 目录下，每个图片使用(时间戳+model).png 来命名
     timeStamp = str(int(time.time()))
