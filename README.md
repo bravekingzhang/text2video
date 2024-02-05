@@ -45,17 +45,11 @@ python3.10 app.py
 http://127.0.0.1:5000/
 ```
 
-## 创作不易，支持开源
+### 加群讨论
+欢迎加群讨论技术？随意打赏，请备注 github 名
 
-如果你觉得对你有用，就请我一杯咖啡。
+<img width="200" alt="image" src="https://github.com/bravekingzhang/react-ai-chat/assets/4476322/7c457992-a0bc-49a3-9bd6-f23b5f1a595e">
 
-<img src="https://github.com/bravekingzhang/utools-code2flow-official/blob/main/shoukuanma.png" alt="收款码" style="width: 40%;" />
-
-## 加群交流
-
-<img src="https://github.com/bravekingzhang/flutter_chat_box/blob/main/artificial/qunliao.pic.jpg"  style="width: 50%;">
-
-添加我，注明自己 github 账号名，入群的目的，加入群聊，一起学习交流。
 
 # License: MIT
 
