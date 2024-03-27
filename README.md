@@ -49,7 +49,7 @@ http://127.0.0.1:5000/
 随意打赏，请备注 github 名
 <img width="200" alt="image" src="https://github.com/bravekingzhang/react-ai-chat/assets/4476322/7c457992-a0bc-49a3-9bd6-f23b5f1a595e">
 
-关注作者微信公众号，老码沉思录，与作者交流。
+关注作者微信公众号，**老码沉思录**，与作者交流。
 
 
 
