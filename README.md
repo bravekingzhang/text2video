@@ -45,13 +45,11 @@ python3.10 app.py
 http://127.0.0.1:5000/
 ```
 
-### 加群讨论
-欢迎加群讨论技术？随意打赏，请备注 github 名
-
+### 赞助
+随意打赏，请备注 github 名
 <img width="200" alt="image" src="https://github.com/bravekingzhang/react-ai-chat/assets/4476322/7c457992-a0bc-49a3-9bd6-f23b5f1a595e">
 
-关注作者微信公众号，与作者交流，第一时间知道作者动态？
-<img width="600" alt="image" src="https://raw.githubusercontent.com/bravekingzhang/pic_go/master/2024/02/22/1708602722259-32c72eeb-4eb7-475e-8029-eb2873a06650.png">
+关注作者微信公众号，老码沉思录，与作者交流。
 
 
 
