@@ -37,11 +37,43 @@ pip install -r requirements.txt
 
 ## 支持生成绘图提示词来提高绘图质量
 
-需要配置 openai 的 api key，支持代理
+需要配置 LLM 的 api key，支持多个提供商切换：
+
+### Moonshot（默认）
 
 ```shell
-OPEN_AI_API_KEY="your open ai api key"
-OPEN_AI_BASE_URL="https://api.moonshot.cn/v1" # for moonshot demo
+OPEN_AI_API_KEY="your moonshot api key"
+OPEN_AI_BASE_URL="https://api.moonshot.cn/v1"
+```
+
+### OpenAI
+
+```shell
+LLM_PROVIDER="openai"
+OPEN_AI_API_KEY="your openai api key"
+```
+
+### MiniMax
+
+[MiniMax](https://www.minimax.io/) 提供高性能的 M2.7 大模型，支持 1M 上下文，适合生成高质量的绘图提示词。
+
+```shell
+LLM_PROVIDER="minimax"
+MINIMAX_API_KEY="your minimax api key"
+# 可选模型：MiniMax-M2.7（默认）、MiniMax-M2.7-highspeed（更快）
+# LLM_MODEL="MiniMax-M2.7-highspeed"
+```
+
+> 提示：设置 `MINIMAX_API_KEY` 环境变量后即自动启用 MiniMax，无需额外设置 `LLM_PROVIDER`。
+
+### 自定义提供商
+
+任何兼容 OpenAI API 的服务都可以通过 `OPEN_AI_BASE_URL` 接入：
+
+```shell
+OPEN_AI_API_KEY="your api key"
+OPEN_AI_BASE_URL="https://your-provider.com/v1"
+LLM_MODEL="your-model-name"
 ```
 
 ## 生成 huggingface api key
